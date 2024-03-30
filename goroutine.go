@@ -8,7 +8,7 @@ import (
 
 // Goroutines manages a collection of goroutines.
 type Goroutines struct {
-	sync.Mutex
+	mu         sync.Mutex
 	goroutines []*goroutine
 }
 
@@ -33,12 +33,12 @@ func (gs *Goroutines) Go(ctx context.Context, fun func(ctx context.Context)) {
 		done:   done,
 	}
 
-	gs.Lock()
+	gs.mu.Lock()
 
 	gs.goroutines = append(gs.goroutines, &gor)
 	gor.index = len(gs.goroutines) - 1
 
-	gs.Unlock()
+	gs.mu.Unlock()
 
 	go func() {
 		defer close(done)
@@ -50,8 +50,8 @@ func (gs *Goroutines) Go(ctx context.Context, fun func(ctx context.Context)) {
 }
 
 func (gs *Goroutines) remove(gor *goroutine) {
-	gs.Lock()
-	defer gs.Unlock()
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
 
 	gs.goroutines = slices.Delete(gs.goroutines, gor.index, gor.index+1)
 
@@ -96,12 +96,12 @@ func (gs *Goroutines) awaitTermination(ctx context.Context, gors []*goroutine) e
 }
 
 func (gs *Goroutines) getGoroutines() []*goroutine {
-	gs.Lock()
+	gs.mu.Lock()
 
 	gors := make([]*goroutine, len(gs.goroutines))
 	copy(gors, gs.goroutines)
 
-	gs.Unlock()
+	gs.mu.Unlock()
 
 	return gors
 }
