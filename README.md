@@ -21,7 +21,7 @@ worker := func(_ context.Context) {
 	time.Sleep(100 * time.Millisecond)
 }
 
-goroutines := New()
+goroutines := goroutine.New()
 
 // Start a new goroutine.
 goroutines.Go(context.Background(), worker)

@@ -1,8 +1,10 @@
-package goroutine
+package goroutine_test
 
 import (
 	"context"
 	"time"
+
+	"github.com/blizzy78/goroutine"
 )
 
 func Example() {
@@ -12,7 +14,7 @@ func Example() {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	goroutines := New()
+	goroutines := goroutine.New()
 
 	// Start a new goroutine.
 	goroutines.Go(context.Background(), worker)
